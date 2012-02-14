@@ -66,6 +66,9 @@ class Jogador(object):
         self.colocouSal       = False
         self.fogaoLigado      = False
         self.tempoCozimento   = 10
+        self.ovoPronto        = False
+        self.ovoNoPrato       = False
+        self.pratoNaMesa      = False
     
     def oQueEstaVendo(self):
         print "----------------------------------------------------------------"
@@ -149,6 +152,8 @@ class Jogador(object):
                 print "Abrindo a porta ..."
                 self.sala = item.salaDestino
                 self.sala.entrar(item.posicaoDestino)
+                return
+        print "Você não está na frente de nenhuma porta"
     
     # Retorna o item que o jogador está encostando ou None caso não esteja encostando em nada
     def __getItem(self):
@@ -402,18 +407,91 @@ class Jogador(object):
         if (self.quebrouOvoPanela and self.tempoCozimento > 0 and self.fogaoLigado):
             self.tempoCozimento -= 1
             time.sleep(1)
-        return self.tempoCozimento == 0
+        if self.tempoCozimento == 0:
+            self.ovoPronto = True
+        
+        return self.ovoPronto
         
     def colocarOvoNoPrato(self):
-        pass
+        if (self.sala.nome == 'Cozinha'):
+            item = self.__getItem()
+            if (item is not None and item.nome == 'Fogão'):
+                if (self.panelaNoFogao):
+                    if (self.quebrouOvoPanela):
+                        if (self.ovoPronto):
+                            print "Ovo colocado dentro do prato !"
+                            self.ovoNoPrato = True
+                        else:
+                            print "O ovo ainda não está pronto !"
+                    else:
+                        print "Você ainda não quebrou o ovo dentro da panela !"
+                else:
+                    print "A panela não está no fogão"
+            else:
+                print "Você não está na frente do fogão"
+        else:
+            print "Você não está na cozinha !"
+            
+    def colocarPratoNaMesa(self):
+        if (self.sala.nome == 'Sala de Jantar'):
+            item = self.__getItem()
+            if (item is not None and item.nome == 'Mesa'):
+                if (self.ovoNoPrato):
+                    print "Prato colocado sobre a mesa."
+                    self.pratoNaMesa = True
+                else:
+                    print "Você não está segurando o prato com o ovo pronto dentro !"
+            else:
+                print "Você não está na frente da mesa !"
+        else:
+            print "Você não está na sala de jantar !"
+            
+    def exibirResumo(self):
+        infracoes = 0
+        
+        if self.armarioAberto: 
+            print "Você deixou o armário aberto !"
+            infracoes += 1
+        if self.geladeiraAberta:
+            print "Você deixou a geladeira aberta !"
+            infracoes += 1
+        if not self.panelaNoFogao:
+            print "Você não colocou a panela no fogão !"
+            infracoes += 1
+        if not self.quebrouOvoPanela:
+            print "Você não quebrou o ovo dentro da panela !"
+            infracoes += 1
+        if not self.colocouSal:
+            print "Você não colocou sal no ovo !"
+            infracoes += 1
+        if self.fogaoLigado:
+            print "O fogão está ligado !"
+            infracoes += 1
+        if not self.ovoPronto:
+            print "O ovo não ficou pronto !"
+            infracoes += 1
+        if not self.ovoNoPrato:
+            print "Você não colocou o ovo no prato !"
+            infracoes += 1
+        if not self.pratoNaMesa:
+            print "Você não colocou o ovo pronto sobre a mesa !"
+            infracoes += 1
+        
+        print "----------------------------------------------------------------"
+        print "Você cometeu", infracoes, "infrações !"
+        
+        if infracoes == 0:
+            print "Parabéns, você conseguiu !!!"
 
-ladoDeFora = Sala("Lado de Fora")
+salaJantar = Sala("Sala de Jantar")
 cozinha    = Sala("Cozinha")
 
-ladoDeFora.adicionarItem(Porta("Porta da Cozinha", Posicao(5, 10), cozinha, Posicao(5, 0)))
+salaJantar.adicionarItem(Item("Mesa", Posicao(5, 0)))
+salaJantar.adicionarItem(Porta("Porta da Cozinha", Posicao(5, 10), cozinha, Posicao(5, 0)))
 
 cozinha.adicionarItem(Item("Armário",   Posicao(10, 5)))
 cozinha.adicionarItem(Item("Geladeira", Posicao(5, 10)))
 cozinha.adicionarItem(Item("Fogão",     Posicao(0, 5)))
+cozinha.adicionarItem(Porta("Porta da Sala de Jantar", Posicao(5, 0), salaJantar, Posicao(5, 10)))
 
-cozinheiro = Jogador(Posicao(5, 5), ladoDeFora)
+cozinheiro = Jogador(Posicao(5, 5), salaJantar)

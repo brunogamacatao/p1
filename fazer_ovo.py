@@ -55,4 +55,49 @@ cozinheiro.ligarFogao()
 while not cozinheiro.jaEstaPronto():
     print "Esperando o ovo ficar pronto ..."
     
-print "Pronto !"
+print "O ovo está pronto"
+
+cozinheiro.colocarOvoNoPrato()
+cozinheiro.virarParaDireita()
+cozinheiro.virarParaDireita()
+
+for i in range(5):
+    cozinheiro.andar()
+
+cozinheiro.virarParaEsquerda()
+
+for i in range(5):
+    cozinheiro.andar()
+    
+cozinheiro.abrirPorta()
+
+for i in range(10):
+    cozinheiro.andar()
+    
+cozinheiro.colocarPratoNaMesa() # Ovo servido com sucesso !
+
+#Voltando agora para arrumar a bagunça 
+cozinheiro.virarParaEsquerda()
+cozinheiro.virarParaEsquerda()
+for i in range(10):
+    cozinheiro.andar()
+cozinheiro.abrirPorta()
+for i in range(10):
+    cozinheiro.andar()
+cozinheiro.fecharGeladeira() # Fechando a geladeira
+
+cozinheiro.virarParaEsquerda()
+for i in range(5):
+    cozinheiro.andar()
+cozinheiro.virarParaEsquerda()
+for i in range(5):
+    cozinheiro.andar()
+cozinheiro.fecharArmario() # Fechando o armário
+
+cozinheiro.virarParaEsquerda()
+for i in range(10):
+    cozinheiro.andar()
+cozinheiro.desligarFogao() # Desligando o fogão
+
+#Exibindo o resumo
+cozinheiro.exibirResumo() # Será que eu consegui ?
